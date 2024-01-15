@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: aws-ec2-instance-checker
+  namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: fdervisi/aws-ec2-instance-checker:*
+    argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/git-creds
+    argocd-image-updater.argoproj.io/git-branch: master
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/fdervisi/k8s_cicd_overview
+    targetRevision: HEAD
+    path: helm/aws-ec2-instance-checker
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: aws-ec2-instance-checker
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
